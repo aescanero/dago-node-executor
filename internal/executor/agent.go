@@ -17,7 +17,7 @@ func (e *Executor) executeAgent(ctx context.Context, state *domain.GraphState, c
 	}
 
 	tools := getSliceConfig(config.Config, "tools")
-	if tools == nil || len(tools) == 0 {
+	if len(tools) == 0 {
 		return nil, fmt.Errorf("tools required for agent mode")
 	}
 

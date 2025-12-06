@@ -8,13 +8,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/aescanero/dago-adapters/pkg/llm"
 	"github.com/aescanero/dago-node-executor/internal/config"
 	"github.com/aescanero/dago-node-executor/internal/executor"
 	"github.com/aescanero/dago-node-executor/internal/worker"
 	"github.com/aescanero/dago-node-executor/pkg/tools/function"
 	"github.com/aescanero/dago-node-executor/pkg/tools/mcp"
-	"github.com/aescanero/dago-libs/pkg/domain"
-	"github.com/aescanero/dago-libs/pkg/ports"
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -37,7 +36,7 @@ func main() {
 
 	// Initialize logger
 	logger := initLogger(cfg.LogLevel)
-	defer logger.Sync()
+	defer func() { _ = logger.Sync() }()
 
 	logger.Info("starting executor worker",
 		zap.String("version", Version),
@@ -58,8 +57,15 @@ func main() {
 	}
 	logger.Info("connected to Redis", zap.String("addr", cfg.RedisAddr))
 
-	// Initialize LLM client
-	llmClient := newLLMClient(cfg, logger)
+	// Initialize LLM client using dago-adapters
+	llmClient, err := llm.NewClient(&llm.Config{
+		Provider: cfg.LLMProvider,
+		APIKey:   cfg.LLMAPIKey,
+		Logger:   logger,
+	})
+	if err != nil {
+		logger.Fatal("failed to create LLM client", zap.Error(err))
+	}
 
 	// Initialize tool clients
 	mcpClient := mcp.NewClient(cfg.GetMCPServers(), logger)
@@ -150,62 +156,6 @@ func initLogger(level string) *zap.Logger {
 	}
 
 	return logger
-}
-
-// newLLMClient creates an LLM client
-func newLLMClient(cfg *config.Config, logger *zap.Logger) ports.LLMClient {
-	// MVP: Stub implementation - TODO: Implement proper Anthropic SDK integration
-	return &anthropicClient{
-		apiKey: cfg.LLMAPIKey,
-		model:  cfg.LLMModel,
-		logger: logger,
-	}
-}
-
-// anthropicClient wraps Anthropic SDK to implement ports.LLMClient
-type anthropicClient struct {
-	apiKey string
-	model  string
-	logger *zap.Logger
-}
-
-// GenerateCompletion implements the compatibility method for domain.LLMRequest
-// MVP: Stub implementation - returns mock response
-func (c *anthropicClient) GenerateCompletion(ctx context.Context, req interface{}) (interface{}, error) {
-	// Type assert to domain.LLMRequest
-	llmReq, ok := req.(*domain.LLMRequest)
-	if !ok {
-		return nil, fmt.Errorf("expected *domain.LLMRequest, got %T", req)
-	}
-
-	c.logger.Warn("LLM client is stub implementation - returning mock response",
-		zap.String("model", llmReq.Model))
-
-	// TODO: Implement actual Anthropic SDK integration
-	// For now, return a mock response to allow testing
-	return &domain.LLMResponse{
-		Content: "This is a stub LLM response. Implement Anthropic SDK integration.",
-		Model:   llmReq.Model,
-		Usage: domain.Usage{
-			InputTokens:  100,
-			OutputTokens: 50,
-		},
-	}, nil
-}
-
-// Complete implements ports.LLMClient
-func (c *anthropicClient) Complete(ctx context.Context, req ports.CompletionRequest) (*ports.CompletionResponse, error) {
-	return nil, fmt.Errorf("Complete not implemented - use GenerateCompletion")
-}
-
-// CompleteWithTools implements ports.LLMClient
-func (c *anthropicClient) CompleteWithTools(ctx context.Context, req ports.CompletionRequest, tools []ports.Tool) (*ports.CompletionResponse, error) {
-	return nil, fmt.Errorf("CompleteWithTools not implemented - use GenerateCompletion")
-}
-
-// CompleteStructured implements ports.LLMClient
-func (c *anthropicClient) CompleteStructured(ctx context.Context, req ports.CompletionRequest, schema ports.JSONSchema) (*ports.StructuredResponse, error) {
-	return nil, fmt.Errorf("CompleteStructured not implemented - use GenerateCompletion")
 }
 
 // compositeToolClient tries MCP first, then falls back to function registry

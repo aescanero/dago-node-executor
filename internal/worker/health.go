@@ -75,7 +75,7 @@ func (hs *HealthServer) handleHealth(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 // handleReady handles readiness check requests
@@ -83,9 +83,9 @@ func (hs *HealthServer) handleReady(w http.ResponseWriter, r *http.Request) {
 	// Worker is ready if it's healthy
 	if hs.worker.IsHealthy() {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ready"))
+		_, _ = w.Write([]byte("ready"))
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write([]byte("not ready"))
+		_, _ = w.Write([]byte("not ready"))
 	}
 }

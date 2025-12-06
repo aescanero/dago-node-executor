@@ -56,7 +56,7 @@ func (c *Config) Validate() error {
 	}
 
 	if c.RedisAddr == "" {
-		return fmt.Errorf("Redis address is required")
+		return fmt.Errorf("redis address is required")
 	}
 
 	if c.LLMAPIKey == "" {

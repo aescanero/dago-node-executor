@@ -30,7 +30,7 @@ func DetectMode(config *NodeConfig) ExecutionMode {
 
 	// Check for tools (indicates agent mode)
 	tools := getSliceConfig(config.Config, "tools")
-	if tools != nil && len(tools) > 0 {
+	if len(tools) > 0 {
 		return ModeAgent
 	}
 
