@@ -7,6 +7,9 @@ VERSION?=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME)"
 
+# Try to use golangci-lint from monorepo bin/, fallback to PATH
+LINTER=$(shell if [ -x ../bin/golangci-lint ]; then echo "../bin/golangci-lint"; else echo "golangci-lint"; fi)
+
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -18,7 +21,7 @@ test: ## Run tests
 	go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint: ## Run linter
-	golangci-lint run ./...
+	$(LINTER) run ./...
 
 fmt: ## Format code
 	gofmt -s -w .

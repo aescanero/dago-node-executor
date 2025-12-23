@@ -10,10 +10,6 @@ cloud.google.com/go/compute/metadata v0.5.0/go.mod h1:aHnloV2TPI38yx4s9+wAZhHykW
 cloud.google.com/go/longrunning v0.5.9 h1:haH9pAuXdPAMqHvzX0zlWQigXT7B0+CL4/2nXXdBo5k=
 cloud.google.com/go/longrunning v0.5.9/go.mod h1:HD+0l9/OOW0za6UWdKJtXoFAX/BGg/3Wj8p10NeWF7c=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/aescanero/dago-adapters v0.1.0 h1:qAlQVHKfnv5ymwfQucJgnOUTqv27ENuZMXsZZh0BkLs=
-github.com/aescanero/dago-adapters v0.1.0/go.mod h1:4nHFput6vps5ZWqzDKmaB9biRFK0KoGuOBKk+vqLdqw=
-github.com/aescanero/dago-libs v0.2.0 h1:KTVMoBBib9b0MW+DyfhCu/TojDIPsD46hw9+KAtiJQ4=
-github.com/aescanero/dago-libs v0.2.0/go.mod h1:hmWFVnaxe7Mx4U93U7fnvSAn0o7Knkux3g0Y3l8jRvc=
 github.com/anthropics/anthropic-sdk-go v1.17.0 h1:BwK8ApcmaAUkvZTiQE0yi3R9XneEFskDIjLTmOAFZxQ=
 github.com/anthropics/anthropic-sdk-go v1.17.0/go.mod h1:WTz31rIUHUHqai2UslPpw5CwXrQP3geYBioRV4WOLvE=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=

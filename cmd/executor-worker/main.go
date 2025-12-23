@@ -61,6 +61,7 @@ func main() {
 	llmClient, err := llm.NewClient(&llm.Config{
 		Provider: cfg.LLMProvider,
 		APIKey:   cfg.LLMAPIKey,
+		BaseURL:  cfg.LLMBaseURL,
 		Logger:   logger,
 	})
 	if err != nil {

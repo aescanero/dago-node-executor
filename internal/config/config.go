@@ -20,6 +20,7 @@ type Config struct {
 	// LLM
 	LLMProvider string `env:"LLM_PROVIDER" envDefault:"anthropic"`
 	LLMAPIKey   string `env:"LLM_API_KEY"`
+	LLMBaseURL  string `env:"LLM_BASE_URL"` // For Ollama endpoint or OpenAI-compatible APIs
 	LLMModel    string `env:"LLM_MODEL" envDefault:"claude-sonnet-4-20250514"`
 
 	// MCP
@@ -59,12 +60,24 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("redis address is required")
 	}
 
-	if c.LLMAPIKey == "" {
-		return fmt.Errorf("LLM API key is required")
+	// Validate LLM provider
+	validProviders := map[string]bool{
+		"anthropic": true,
+		"claude":    true,
+		"openai":    true,
+		"gpt":       true,
+		"gemini":    true,
+		"google":    true,
+		"ollama":    true,
+		"local":     true,
+	}
+	if !validProviders[c.LLMProvider] {
+		return fmt.Errorf("unsupported LLM provider: %s (supported: anthropic, openai, gemini, ollama)", c.LLMProvider)
 	}
 
-	if c.LLMProvider != "anthropic" {
-		return fmt.Errorf("unsupported LLM provider: %s (only 'anthropic' supported in MVP)", c.LLMProvider)
+	// API key is not required for Ollama (local models)
+	if c.LLMAPIKey == "" && c.LLMProvider != "ollama" && c.LLMProvider != "local" {
+		return fmt.Errorf("LLM API key is required for provider: %s", c.LLMProvider)
 	}
 
 	if c.MaxIterations < 1 {

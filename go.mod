@@ -3,7 +3,6 @@ module github.com/aescanero/dago-node-executor
 go 1.25.5
 
 require (
-
 	// LLM adapters (shared implementations)
 	github.com/aescanero/dago-adapters v0.1.0
 	github.com/aescanero/dago-libs v0.2.0
@@ -62,4 +61,10 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240722135656-d784300faade // indirect
 	google.golang.org/grpc v1.64.1 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
+)
+
+// Local development replacements (monorepo)
+replace (
+	github.com/aescanero/dago-adapters => ../dago-adapters
+	github.com/aescanero/dago-libs => ../dago-libs
 )
